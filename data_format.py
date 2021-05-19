@@ -12,10 +12,10 @@ last_year_peak = 3802.01
 def news_fetcher():
     r = requests.get(NEWS)
     news = r.json()[-1]
-    news["title"] = news.pop("標題")
-    news["update_time"] = news.pop("更新時間")
-    news["author"] = news.pop("記者")
-    news["content"] = news.pop("內文")
+    # news["title"] = news.pop("標題")
+    # news["update_time"] = news.pop("更新時間")
+    # news["author"] = news.pop("記者")
+    # news["content"] = news.pop("內文")
     return news
 
 def covid_data_fetcher():
