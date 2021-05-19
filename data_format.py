@@ -31,8 +31,9 @@ def covid_data_fetcher():
 
 def power_data_exporter():
     
-    with open("./power.json") as f:
-        power_by_hr = [ json.loads(line) for line in f.readlines()] # parse \n ?
+    r = requests.get("https://storage.googleapis.com/projects.readr.tw/power.json")
+    
+    power_by_hr = r.text.split('\n')
 
     power_json = {
         "power_24h":  power_by_hr, # power data within 24hr by hour
