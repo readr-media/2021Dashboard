@@ -4,6 +4,8 @@ import json
 from utils import gsutil_upload
 file_name = "power.json"
 
+monthly_peak = "https://raw.githubusercontent.com/readr-media/readr-data/master/electric-power/monthly_peak.csv"
+
 def power_data_fetcher():
     # generated
     r = requests.get("http://data.taipower.com.tw/opendata01/apply/file/d006001/001.txt")
