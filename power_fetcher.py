@@ -1,6 +1,8 @@
 from requests_html import HTMLSession
 import requests
 import json
+from utils import gsutil_upload
+file_name = "power.json"
 
 def power_data_fetcher():
     # generated
@@ -26,9 +28,10 @@ def power_data_fetcher():
     consumed = float(c.replace(',',''))
     data = {"time": update_time, "status": {"發電": generated, "用電": consumed}}
 
-    with open("./power.json", 'a') as f:
+    with open(file_name, 'a') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
 
+    gsutil_upload(f'./{file_name}')
     return generated, consumed, update_time
 
 if __name__ == "__main__":

@@ -2,3 +2,7 @@
 venv/
 .idea/
 ghostdriver.log
+configs/
+__pycache__
+.DS_Store
+*.json

@@ -4,10 +4,13 @@ from datetime import datetime
 import requests
 import pandas as pd
 from power_fetcher import power_data_fetcher
+from utils import gsutil_upload
 
 NEWS = "https://storage.googleapis.com/projects.readr.tw/dashboard_covid_news.json"
 covid = "https://raw.github.com/readr-media/readr-data/master/covid-19/indigenous_case_county.csv"
 last_year_peak = 3802.01
+
+file_name = "dashboard.json"
 
 def news_fetcher():
     r = requests.get(NEWS)
@@ -27,6 +30,7 @@ def covid_data_fetcher():
     return {"today": int(df.iloc[-1][1:-1].sum()), "city": city, "update_time": df.iloc[-1][0]}
 
 def power_data_exporter():
+    
     with open("./power.json") as f:
         power_by_hr = [ json.loads(line) for line in f.readlines()] # parse \n ?
 
@@ -62,9 +66,10 @@ def export_data():
 def main():
     data = export_data()
 
-    with open("./dashboard.json", 'w') as f:
+    with open(file_name, 'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
 
+    gsutil_upload(f"./{file_name}")
 
 if __name__ == "__main__":
     # power_data_fetcher()
