@@ -7,6 +7,7 @@ from power_fetcher import power_data_fetcher
 from water_warning import water_warning
 from utils import gsutil_upload
 import os
+import asyncio
 
 base_dir = os.path.dirname(os.path.abspath(__file__))+'/'
 
@@ -17,14 +18,15 @@ last_year_peak = 3802.01
 yesterday = date.today() - timedelta(days=1)
 dashboard_output = "dashboard.json"
 
-def news_fetcher():
+async def news_fetcher():
+    # print("NEWS")
     news = "https://storage.googleapis.com/projects.readr.tw/dashboard_covid_news.json"
     r = requests.get(news)
     news = r.json()[-1]
     return news
 
-def covid_data_fetcher():
-    
+async def covid_data_fetcher():
+    # print("COVID")
     r = requests.get(covid).content
     df = pd.read_csv(io.StringIO(r.decode('utf-8')))
 
@@ -51,8 +53,9 @@ def covid_data_fetcher():
     "update_time": df.iloc[-1][0]}
 
 
-def power_month_peak():
+async def power_month_peak():
     """Get last month power peak"""
+    # print("POWER MONTH PEAK")
     r = requests.get(power_peak).content
     df = pd.read_csv(io.StringIO(r.decode('utf-8')))
     this_month = datetime.now().month
@@ -60,9 +63,9 @@ def power_month_peak():
 
     return float(power_max.replace(',',''))
 
-def power_data_exporter():
+async def power_data_exporter():
     """Read from GCS and pack the data"""
-    
+    # print("POWER")
     r = requests.get("https://storage.googleapis.com/projects.readr.tw/power.json")
     power_by_hr = r.json()
 
@@ -71,31 +74,32 @@ def power_data_exporter():
     power_json = {
         "power_24h_yesterday": power_24h_yesterday,
         "power_24h_today":  power_24h_today, # power data within 24hr by hour
-        "month_peak" : power_month_peak(),
+        "month_peak" : await power_month_peak(),
         "last_year_peak": last_year_peak,
         "update_time": datetime.now().strftime("%Y-%m-%d") # update time then power_24h has data appended
     }
 
     return power_json
 
-def water_data_fetcher():
+async def water_data_fetcher():
+    # print("WATER")
     r = requests.get(reservoir)
     data = r.json()
     data.update({"warning":water_warning()})
     return data
 
 
-def export_data():
-
-    data = {"news": news_fetcher(),
-    "water": water_data_fetcher(),
-    "power": power_data_exporter(),
-    "covid": covid_data_fetcher()
+async def export_data():
+    # print("Export DATA")
+    data = {"news": await news_fetcher(),
+    "water": await water_data_fetcher(),
+    "power": await power_data_exporter(),
+    "covid": await covid_data_fetcher()
     }
     return data
 
-def main():
-    data = export_data()
+async def main():
+    data = await export_data()
 
     with open(base_dir + dashboard_output, 'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
@@ -104,4 +108,4 @@ def main():
 
 if __name__ == "__main__":
     # power_data_fetcher()
-    main()
+    asyncio.run(main())
