@@ -48,7 +48,7 @@ def power_data_exporter():
     power_24h_yesterday = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday ]
     power_24h_today = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today() ]
     power_json = {
-        "power_24h_yesterday": power_24h_yesterday
+        "power_24h_yesterday": power_24h_yesterday,
         "power_24h_today":  power_24h_today, # power data within 24hr by hour
         "month_peak" : power_month_peak(),
         "last_year_peak": last_year_peak,
