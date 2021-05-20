@@ -6,7 +6,9 @@ import pandas as pd
 from power_fetcher import power_data_fetcher
 from water_warning import water_warning
 from utils import gsutil_upload
+import os
 
+base_dir = os.path.dirname(os.path.abspath(__file__))+'/'
 
 covid = "https://raw.github.com/readr-media/readr-data/master/covid-19/indigenous_case_county.csv"
 reservoir = "https://storage.googleapis.com/projects.readr.tw/taiwan-dashboard/reservoir.json"
@@ -76,10 +78,10 @@ def export_data():
 def main():
     data = export_data()
 
-    with open(dashboard_output, 'w') as f:
+    with open(base_dir + dashboard_output, 'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
 
-    gsutil_upload(f"./{dashboard_output}")
+    gsutil_upload(f"{base_dir}{dashboard_output}")
 
 if __name__ == "__main__":
     # power_data_fetcher()

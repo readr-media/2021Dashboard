@@ -2,8 +2,10 @@ from requests_html import HTMLSession
 import requests
 import json
 from utils import gsutil_upload
-file_name = "power.json"
+import os
 
+file_name = "power.json"
+base_dir = os.path.dirname(os.path.abspath(__file__))+'/'
 monthly_peak = "https://raw.githubusercontent.com/readr-media/readr-data/master/electric-power/monthly_peak.csv"
 
 def power_data_fetcher():
@@ -29,13 +31,13 @@ def power_data_fetcher():
     c = r.html.xpath('//*[@id="latest_load"]/text()')[0] # string
     consumed = float(c.replace(',',''))
 
-    with open(file_name) as f:
+    with open(base_dir + file_name) as f:
         data = json.loads(f.read())
         data.append({"time": update_time, "status": {"發電": generated, "用電": consumed}})
-    with open(file_name,'w') as f:
+    with open(base_dir + file_name,'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
-    gsutil_upload(f'./{file_name}')
+    gsutil_upload(f'{base_dir}{file_name}')
     # return generated, consumed, update_time
 
 if __name__ == "__main__":
