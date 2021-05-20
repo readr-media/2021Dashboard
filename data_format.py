@@ -24,12 +24,23 @@ def news_fetcher():
     return news
 
 def covid_data_fetcher():
+    
     r = requests.get(covid).content
     df = pd.read_csv(io.StringIO(r.decode('utf-8')))
     city = df.sum()[1:-1].to_dict()
+    city_today = df.iloc[-1][1:-1].to_dict()
     for k,v in city.items():
         city[k] = int(v)
-    return {"today": int(df.iloc[-1][1:-1].sum()), "city": city, "update_time": df.iloc[-1][0]}
+    for k,v in city_today.items():
+        city_today[k] = int(v)
+
+    taiwan_total = int(df.sum()[1:-1].sum())
+
+    return {"today": int(df.iloc[-1][1:-1].sum()),
+    "city": city, 
+    "city_today":city_today, 
+    "taiwan_total": taiwan_total,
+    "update_time": df.iloc[-1][0]}
 
 
 def power_month_peak():
