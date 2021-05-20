@@ -27,18 +27,26 @@ def covid_data_fetcher():
     
     r = requests.get(covid).content
     df = pd.read_csv(io.StringIO(r.decode('utf-8')))
-    city = df.sum()[1:-1].to_dict()
-    city_today = df.iloc[-1][1:-1].to_dict()
-    for k,v in city.items():
-        city[k] = int(v)
-    for k,v in city_today.items():
+
+    city_prev_total = df.iloc[1:].sum()[1:].to_dict() # 縣市至昨日為止總確診
+
+    city_today = df.iloc[-1][1:-1].to_dict() # 縣市今日新增
+
+
+    for k, v in city_prev_total.items():
+        city_prev_total[k] = int(v)
+    for k, v in city_today.items():
         city_today[k] = int(v)
+    
+    city = []
+    for k, v in city_today.items():
+        data = {"city_name":k, "city_prev_total": city_prev_total[k], "city_today": city_today[k]}
+        city.append(data)
 
-    taiwan_total = int(df.sum()[1:-1].sum())
+    taiwan_total = int(df.sum()[1:].sum())
 
-    return {"today": int(df.iloc[-1][1:-1].sum()),
-    "city": city, 
-    "city_today":city_today, 
+    return {"today": int(df.iloc[-1][1:].sum()),
+    "city": city,
     "taiwan_total": taiwan_total,
     "update_time": df.iloc[-1][0]}
 
