@@ -59,8 +59,9 @@ def power_data_exporter():
 
 def water_data_fetcher():
     r = requests.get(reservoir)
-    r.json().update({"warning":water_warning()})
-    return r.json()
+    data = r.json()
+    data.update({"warning":water_warning()})
+    return data
 
 
 def export_data():
