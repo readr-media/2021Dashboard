@@ -28,13 +28,15 @@ def power_data_fetcher():
     r.html.render()
     c = r.html.xpath('//*[@id="latest_load"]/text()')[0] # string
     consumed = float(c.replace(',',''))
-    data = {"time": update_time, "status": {"發電": generated, "用電": consumed}}
 
-    with open(file_name, 'a') as f:
-        f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
+    with open(file_name) as f:
+        data = json.loads(f.read())
+        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed}})
+    with open(file_name,'w') as f:
+        f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
     gsutil_upload(f'./{file_name}')
-    return generated, consumed, update_time
+    # return generated, consumed, update_time
 
 if __name__ == "__main__":
     power_data_fetcher()
