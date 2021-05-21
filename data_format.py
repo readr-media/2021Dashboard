@@ -76,7 +76,7 @@ async def power_data_exporter():
         "power_24h_today":  power_24h_today, # power data within 24hr by hour
         "month_peak" : await power_month_peak(),
         "last_year_peak": last_year_peak,
-        "update_time": datetime.now().strftime("%Y-%m-%d") # update time then power_24h has data appended
+        "update_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S") # update time then power_24h has data appended
     }
 
     return power_json
@@ -94,7 +94,8 @@ async def export_data():
     data = {"news": await news_fetcher(),
     "water": await water_data_fetcher(),
     "power": await power_data_exporter(),
-    "covid": await covid_data_fetcher()
+    "covid": await covid_data_fetcher(),
+    "update_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     return data
 
