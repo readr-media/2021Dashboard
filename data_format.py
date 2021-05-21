@@ -47,10 +47,10 @@ async def covid_data_fetcher():
 
     taiwan_total = int(df.sum()[1:].sum())
 
-    return {"today": int(df.iloc[-1][1:].sum()),
+    return {"today": int(df.iloc[-1][1:-1].sum()),
     "city": city,
     "taiwan_total": taiwan_total,
-    "update_time": df.iloc[-1][0]}
+    "update_time": df.iloc[-1][-1]}
 
 
 async def power_month_peak():
@@ -69,8 +69,9 @@ async def power_data_exporter():
     r = requests.get("https://storage.googleapis.com/projects.readr.tw/power.json")
     power_by_hr = r.json()
 
-    power_24h_yesterday = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday ]
-    power_24h_today = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today() ]
+    power_24h_yesterday = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday and datetime.strptime(item['time'],'%Y-%m-%d %H:%M').minute==0)]
+    power_24h_today = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today() and datetime.strptime(item['time'],'%Y-%m-%d %H:%M').minute==0) ]
+
     power_json = {
         "power_24h_yesterday": power_24h_yesterday,
         "power_24h_today":  power_24h_today, # power data within 24hr by hour
