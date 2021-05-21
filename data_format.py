@@ -22,7 +22,7 @@ async def news_fetcher():
     # print("NEWS")
     news = "https://storage.googleapis.com/projects.readr.tw/dashboard_covid_news.json"
     r = requests.get(news)
-    news = r.json()[-1]
+    news = r.json()
     return news
 
 async def covid_data_fetcher():
