@@ -21,7 +21,7 @@ def power_data_fetcher():
                 gg.append(c)
             except ValueError:
                 continue
-    generated = sum(gg)
+    generated = round(sum(gg)/10, 2) # Unit in 10kW
     update_time = gen['']
 
     #consumed
@@ -29,8 +29,9 @@ def power_data_fetcher():
     r = session.get("https://www.taipower.com.tw/d006/loadGraph/loadGraph/load_briefing3.html") # yearly
     r.html.render()
     c = r.html.xpath('//*[@id="latest_load"]/text()')[0] # string
-    consumed = float(c.replace(',',''))
+    consumed = round(float(c.replace(',','')), 2)
 
+    # File I/O 
     with open(base_dir + file_name) as f:
         data = json.loads(f.read())
         data.append({"time": update_time, "status": {"發電": generated, "用電": consumed}})
