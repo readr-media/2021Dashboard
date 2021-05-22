@@ -61,7 +61,7 @@ async def power_month_peak():
     this_month = datetime.now().month
     power_max = df[df.month==this_month].peak.max() # str
 
-    return float(power_max.replace(',',''))
+    return float(power_max.replace(',',''))/10000
 
 async def power_data_exporter():
     """Read from GCS and pack the data"""
