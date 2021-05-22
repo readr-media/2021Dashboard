@@ -38,7 +38,7 @@ def power_data_fetcher():
     # File I/O 
     with open(base_dir + file_name) as f:
         data = json.loads(f .read())
-        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed, "供電狀況":supply_status, "最大供電能力": max_supply}})
+        data.append({"time": update_time, "status": {"最大供電": max_supply, "用電": consumed, "供電狀況":supply_status}})
     with open(base_dir + file_name,'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
