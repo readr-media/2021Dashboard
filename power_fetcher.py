@@ -32,10 +32,13 @@ def power_data_fetcher():
     consumed = round(float(c.replace(',','')), 2)
     supply_status = r.html.xpath('//*[@id="lighttext"]/text()')[0]
 
+    m = r.html.xpath('//*[@id="supply_arranged_max"]/text()')[0]
+    max_supply = float(m.replace(',',''))
+
     # File I/O 
     with open(base_dir + file_name) as f:
         data = json.loads(f .read())
-        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed, "供電狀況":supply_status}})
+        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed, "供電狀況":supply_status, "最大供電能力": max_supply}})
     with open(base_dir + file_name,'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
