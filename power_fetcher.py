@@ -30,11 +30,12 @@ def power_data_fetcher():
     r.html.render()
     c = r.html.xpath('//*[@id="latest_load"]/text()')[0] # string
     consumed = round(float(c.replace(',','')), 2)
+    supply_status = r.html.xpath('//*[@id="lighttext"]/text()')[0]
 
     # File I/O 
     with open(base_dir + file_name) as f:
-        data = json.loads(f.read())
-        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed}})
+        data = json.loads(f .read())
+        data.append({"time": update_time, "status": {"發電": generated, "用電": consumed, "供電狀況":supply_status}})
     with open(base_dir + file_name,'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
