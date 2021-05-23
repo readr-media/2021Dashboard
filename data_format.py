@@ -30,9 +30,13 @@ async def covid_data_fetcher():
     r = requests.get(covid).content
     df = pd.read_csv(io.StringIO(r.decode('utf-8')))
 
+    # 台灣本土總確診
+    cases = requests.get('https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv').content
+    cases_frame = pd.read_csv(io.StringIO(cases.decode('utf-8')))
+
     city_prev_total = df.iloc[1:].sum()[1:].to_dict() # 縣市至昨日為止總確診
 
-    city_today = df.iloc[-1][1:-1].to_dict() # 縣市今日新增
+    city_today = df.iloc[-1][1:-2].to_dict() # 縣市今日新增
 
 
     for k, v in city_prev_total.items():
@@ -42,15 +46,15 @@ async def covid_data_fetcher():
     
     city = []
     for k, v in city_today.items():
-        data = {"city_name":k, "city_prev_total": city_prev_total[k], "city_today": city_today[k]}
+        data = {"city_name":k, "city_prev_total": city_prev_total[k], "city_today": city_today[k], "level": 3}
         city.append(data)
 
-    taiwan_total = int(df.sum()[1:].sum())
 
-    return {"today": int(df.iloc[-1][1:-1].sum()),
+    return {"today": int(df.iloc[-1][1:-2].sum()),
     "city": city,
-    "taiwan_total": taiwan_total,
-    "update_time": df.iloc[-1][-1]}
+    "taiwan_total": cases_frame[cases_frame['case_type']=='indigenous case'].shape[0],
+    "taiwan_level": 3,
+    "update_time": df.iloc[-1][-2]}
 
 
 async def power_month_peak():
