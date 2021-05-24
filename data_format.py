@@ -25,21 +25,25 @@ async def news_fetcher():
     news = r.json()
     return news
 
+def df_from_url(url):
+    r = requests.get(url).content
+    return pd.read_csv(io.StringIO(r.decode('utf-8')))
+
 async def covid_data_fetcher():
     # print("COVID")
-    r = requests.get(covid).content
-    df = pd.read_csv(io.StringIO(r.decode('utf-8')))
+    df = df_from_url(covid)
 
     # 台灣本土總確診
-    cases = requests.get('https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv').content
-    cases_frame = pd.read_csv(io.StringIO(cases.decode('utf-8')))
-
+    cases_frame = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv")
+    
     city_prev_total = df.iloc[1:].sum()[1:].to_dict() # 縣市至昨日為止總確診
     city_today = df.iloc[-1][1:-2].to_dict() # 縣市今日新增
 
+    cases_today = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/indigenous_case_group_after0514.csv")
+
     # Death
     death_total = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
-    death_today = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
+    death_today = cases_today.iloc[-1]['death_case']
 
     for k, v in city_prev_total.items():
         city_prev_total[k] = int(v)
@@ -52,9 +56,12 @@ async def covid_data_fetcher():
         city.append(data)
 
 
-    return {"today": int(cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.confirmed_date==date.today().strftime('%Y-%m-%d'))].shape[0]),
+    return {"today": int(cases_today.iloc[-1]['indigenous case']),
     "city": city,
     "taiwan_total": cases_frame[cases_frame['case_type']=='indigenous case'].shape[0],
+    "death_total": death_total,
+    "death_today": death_today,
+    "backlog": df.iloc[-1][-1],
     "taiwan_level": 3,
     "update_time": df.iloc[-1][-2]}
 
@@ -62,8 +69,7 @@ async def covid_data_fetcher():
 async def power_month_peak():
     """Get last month power peak"""
     # print("POWER MONTH PEAK")
-    r = requests.get(power_peak).content
-    df = pd.read_csv(io.StringIO(r.decode('utf-8')))
+    df = df_from_url(power_peak)
     this_month = datetime.now().month
     power_max = df[df.month==this_month].peak.max() # str
 
