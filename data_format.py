@@ -52,7 +52,7 @@ async def covid_data_fetcher():
         city.append(data)
 
 
-    return {"today": int(df.iloc[-1][1:-2].sum()),
+    return {"today": int(cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.confirmed_date==date.today().strftime('%Y-%m-%d'))].shape[0]),
     "city": city,
     "taiwan_total": cases_frame[cases_frame['case_type']=='indigenous case'].shape[0],
     "taiwan_level": 3,
