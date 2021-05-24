@@ -35,9 +35,11 @@ async def covid_data_fetcher():
     cases_frame = pd.read_csv(io.StringIO(cases.decode('utf-8')))
 
     city_prev_total = df.iloc[1:].sum()[1:].to_dict() # 縣市至昨日為止總確診
-
     city_today = df.iloc[-1][1:-2].to_dict() # 縣市今日新增
 
+    # Death
+    death_total = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
+    death_today = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
 
     for k, v in city_prev_total.items():
         city_prev_total[k] = int(v)
