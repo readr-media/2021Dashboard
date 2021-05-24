@@ -75,8 +75,8 @@ async def power_data_exporter():
 
     # power_24h_yesterday = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday and datetime.strptime(item['time'],'%Y-%m-%d %H:%M').minute==0)]
     # power_24h_today = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today() and datetime.strptime(item['time'],'%Y-%m-%d %H:%M').minute==0) ]
-    power_24h_yesterday = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday ]
-    power_24h_today = [item for item in power_by_hr if (datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today()  ]
+    power_24h_yesterday = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==yesterday ]
+    power_24h_today = [item for item in power_by_hr if datetime.strptime(item['time'],'%Y-%m-%d %H:%M').date()==date.today()  ]
 
     power_json = {
         "power_24h_yesterday": power_24h_yesterday,
