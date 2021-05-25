@@ -8,6 +8,7 @@ from water_warning import water_warning
 from utils import gsutil_upload
 import os
 import asyncio
+from numpy import nan
 
 base_dir = os.path.dirname(os.path.abspath(__file__))+'/'
 
@@ -36,8 +37,11 @@ async def covid_data_fetcher():
     # 台灣本土總確診
     cases_frame = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv")
     
-    city_prev_total = df.iloc[1:].sum()[1:].to_dict() # 縣市至昨日為止總確診
+    city_prev_total = df.iloc[:-1].sum()[1:].to_dict() # 縣市至昨日為止總確診
     city_today = df.iloc[-1][1:-2].to_dict() # 縣市今日新增
+    # index[-1]為今日
+    # [1:] 去除published
+    # [1:-2] 去除published, update_time, back_log
 
     cases_today = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/indigenous_case_group_after0514.csv")
 
@@ -54,14 +58,18 @@ async def covid_data_fetcher():
     for k, v in city_today.items():
         data = {"city_name":k, "city_prev_total": city_prev_total[k], "city_today": city_today[k], "level": 3}
         city.append(data)
-
-
+    
+    
+    backlog_flag  = df.iloc[-1][-1]
+    if backlog_flag is nan:
+        backlog_flag = 'n'
+    
     return {"today": int(cases_today.iloc[-1]['indigenous case']),
     "city": city,
     "taiwan_total": cases_frame[cases_frame['case_type']=='indigenous case'].shape[0],
     "death_total": death_total,
     "death_today": death_today,
-    "backlog": df.iloc[-1][-1],
+    "backlog": backlog_flag,
     "taiwan_level": 3,
     "update_time": df.iloc[-1][-2]}
 
