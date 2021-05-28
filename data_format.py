@@ -129,7 +129,7 @@ async def main():
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
 
     print(f"Time elapsed: {time()-t0}")
-    # gsutil_upload(f"{base_dir}{dashboard_output}")
+    gsutil_upload(f"{base_dir}{dashboard_output}")
 
 if __name__ == "__main__":
     # power_data_fetcher()
