@@ -35,6 +35,7 @@ async def covid_data_fetcher():
     cases_frame = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv")
     
     city_prev_total = df.iloc[:-1].sum()[1:].to_dict() # 縣市至昨日為止總確診
+    df.fillna(0, inplace=True)
     city_today = df.iloc[-1][1:-2].to_dict() # 縣市今日新增
     # index[-1]為今日
     # [1:] 去除published
@@ -45,7 +46,7 @@ async def covid_data_fetcher():
     # Death
     death_total = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
     death_today = cases_today.iloc[-1]['death_case']
-
+    
     for k, v in city_prev_total.items():
         city_prev_total[k] = int(v)
     for k, v in city_today.items():
