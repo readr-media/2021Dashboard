@@ -72,7 +72,7 @@ def power_data_fetcher():
     with open(base_dir + file_name,'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode())
 
-    # gsutil_upload(f'{base_dir}{file_name}')
+    gsutil_upload(f'{base_dir}{file_name}')
     # return generated, consumed, update_time
 
 if __name__ == "__main__":

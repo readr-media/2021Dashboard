@@ -29,10 +29,10 @@ async def news_fetcher():
 
 async def covid_data_fetcher():
     # print("COVID")
-    df = df_from_url(covid)
+    df = df_from_url(covid, header=0)
 
     # 台灣本土總確診
-    cases_frame = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv")
+    cases_frame = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/covid19_comfirmed_case_taiwan.csv", header=0)
     
     city_prev_total = df.iloc[:-1].sum()[1:].to_dict() # 縣市至昨日為止總確診
     df.fillna(0, inplace=True)
@@ -41,7 +41,7 @@ async def covid_data_fetcher():
     # [1:] 去除published
     # [1:-2] 去除published, update_time, back_log
 
-    cases_today = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/indigenous_case_group_after0514.csv")
+    cases_today = df_from_url("https://raw.githubusercontent.com/readr-media/readr-data/master/covid-19/indigenous_case_group_after0514.csv", header=0)
 
     # Death
     death_total = cases_frame[(cases_frame.case_type=='indigenous case') & (cases_frame.state=='deceased')].shape[0]
@@ -75,7 +75,7 @@ async def covid_data_fetcher():
 async def power_month_peak():
     """Get last month power peak"""
     # print("POWER MONTH PEAK")
-    df = df_from_url(power_peak)
+    df = df_from_url(power_peak, header=0)
     this_month = datetime.now().month
     power_max = df[df.month==this_month].peak.max() # str
 
