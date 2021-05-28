@@ -1,4 +1,15 @@
-import os
+import os, io
+import requests
+import pandas as pd
+
+def df_from_url(url, **kwargs):
+    header = kwargs.get("header")
+    r = requests.get(url).content
+    if header:
+        return pd.read_csv(io.StringIO(r.decode('utf-8')))
+    else:
+        return pd.read_csv(io.StringIO(r.decode('utf-8')), header=header)
+
 
 def gsutil_upload(output_file):
     base_dir, filename = os.path.split(output_file)

@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 from power_fetcher import power_data_fetcher
 from water_warning import water_warning
-from utils import gsutil_upload
+from utils import gsutil_upload, df_from_url
 import os
 import asyncio
 from numpy import nan
@@ -26,9 +26,6 @@ async def news_fetcher():
     news = r.json()
     return news
 
-def df_from_url(url):
-    r = requests.get(url).content
-    return pd.read_csv(io.StringIO(r.decode('utf-8')))
 
 async def covid_data_fetcher():
     # print("COVID")
@@ -123,12 +120,15 @@ async def export_data():
     return data
 
 async def main():
+    from time import time
+    t0 = time()
     data = await export_data()
 
     with open(base_dir + dashboard_output, 'w') as f:
         f.write(json.dumps(data, ensure_ascii=False).encode('utf8').decode()+'\n')
 
-    gsutil_upload(f"{base_dir}{dashboard_output}")
+    print(f"Time elapsed: {time()-t0}")
+    # gsutil_upload(f"{base_dir}{dashboard_output}")
 
 if __name__ == "__main__":
     # power_data_fetcher()
