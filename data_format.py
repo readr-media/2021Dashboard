@@ -68,7 +68,7 @@ async def covid_data_fetcher():
     "death_total": death_total,
     "death_today": death_today,
     "backlog": backlog_flag,
-    "taiwan_level": 3,
+    "taiwan_level": 2,
     "update_time": df.iloc[-1][-2]}
 
 
